@@ -23,6 +23,7 @@
       
     </div>
     {{ checkedBoxes }}
+
   </div>
 </template>
 
@@ -40,6 +41,8 @@ export default {
       results: [],
       noResults: false,
       checkedBoxes: [],
+      indexName: 'words',
+      queryKey: 'roman'
     };
   },
   methods: {
@@ -48,7 +51,7 @@ export default {
       this.results = [];
 
       stretchy
-        .searchTerm(this.query)
+        .searchTerm(this.indexName, this.queryKey, this.query)
         .then((response) => {
           response.forEach((element) => {
             this.results.push(element);
@@ -65,4 +68,42 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+input {
+  border: 2px solid black;
+}
+
+button {
+  background: #0f3aaf;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin: 10px;
+}
+button[disabled] {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+input {
+  padding: 10px 15px;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  color: #555;
+}
+
+label {
+  color: black;
+  display: inline-block;
+  margin: 25px 0 15px;
+  font-size: 0.6em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+</style>

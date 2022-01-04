@@ -1,18 +1,39 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+<div class="toolkit">
+  <div class="searchdiv">
+    <SearchLexicon />
+  </div>
+  <div class="createmorpheme">
+    <MorphemeBreakdown/>
+  </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import SearchLexicon from "../components/SearchLexicon";
+import MorphemeBreakdown from "../components/MorphemeBreakdown";
 
 export default {
   name: "Home",
-  components: {
-    HelloWorld,
+  components: { SearchLexicon, MorphemeBreakdown },
+  data() {
+    return {
+      results: "",
+    };
   },
+  methods: {},
 };
 </script>
+
+<style scoped>
+.toolkit {
+    /* display: flex; */
+}.searchdiv{
+  border: 2px solid black;
+  /* background-color: black; */
+  /* color: white */
+}
+.createmorpheme{
+  border: 2px solid black;
+}
+</style>

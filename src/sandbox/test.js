@@ -49,3 +49,10 @@ async function run () {
 }
 
 run().catch(console.log)
+
+
+for (const [ id, value] of Object.entries(response)) {
+  const tempObj={ id : {'morpheme': value.morpheme, 'definition': value.definition}}
+  this.morphemeList.push(tempObj)
+  console.log(this.morphemeList)
+}

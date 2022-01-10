@@ -12,12 +12,11 @@ import stretchy from "../services/stretchy";
 
 export default {
   name: "IndexMorpheme",
-  props: [],
+  props: ['currentindex'],
   data() {
     return {
       inputMorpheme: null,
       inputDefinition: null,
-      currentIndex: "testdelete",
     };
   },
   methods: {
@@ -25,17 +24,19 @@ export default {
       if (this.inputMorpheme) {
         stretchy
           .indexMorpheme(
-            this.currentIndex,
+            this.currentindex,
             this.inputMorpheme,
             this.inputDefinition
           )
           .then(() => {
-            this.inputMorpheme = null;
+              console.log(`morpheme ${this.inputMorpheme} added to index: ${this.currentindex}`);
+             this.$emit('morpheme-added')
+             this.inputMorpheme = null;
             this.inputDefinition = null;
           });
-        console.log(`morpheme ${this.inputMorpheme} added to index: ${this.currentIndex}`);
+        
         // this.$parent.listMorphemes()
-        this.$emit('morpheme-added')
+        
       }
     },
   },

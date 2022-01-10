@@ -7,7 +7,6 @@ const client = new elasticsearch.Client({ node: "http://localhost:9200/" });
 async function indexMorpheme(index, morpheme, definition) {
   return await client.index({
     index: index,
-    type: 'morpheme',
     body: {
       morpheme: morpheme,
       definition: definition,
@@ -31,13 +30,22 @@ async function searchTerm(index, category, term) {
 }
 
 async function wholeIndex(index) {
+  await client.indices.refresh({index})
   const response = await client.search({
     index: index,
-    size: 200 });
-  // console.log(response.hits.hits);
-  return response.hits.hits;
+    size: 200,
+  })
+  const returnArray =[]
+  response.hits.hits.forEach(element => {
+    returnArray.push ({
+      "id": element._id,
+      "morpheme": element['_source']['morpheme'],
+      "definition": element['_source']['definition']
+    })
+  })
+  console.log(`Stretchy: returning response of ${returnArray.length} elements`)
+  return returnArray;
 }
-
 
 async function createIndex(indexName) {
   let indexLowered = indexName.toLowerCase();
@@ -47,3 +55,5 @@ async function createIndex(indexName) {
 }
 
 export default { searchTerm, indexMorpheme, createIndex, wholeIndex };
+
+// wholeIndex('morphemes')

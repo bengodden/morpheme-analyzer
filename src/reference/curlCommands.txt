@@ -1,0 +1,14 @@
+Delete an index
+curl -X DELETE "localhost:9200/testdelete?pretty"
+
+
+Delete document
+curl -XDELETE "localhost:9200/index/type/documentID"
+
+
+Get all documents:
+curl -XGET http://localhost:9200/foo/_search?pretty=true&q=*:*
+
+curl -XGET http://localhost:9200/testdelete/_search?size=50&q=*:*
+
+

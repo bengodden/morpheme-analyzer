@@ -1,0 +1,41 @@
+For dealing with reactivities and arrays, look to this example from 
+kiyanaw-backend/src/store/region.js
+
+/**
+   * Regions for the current transcription.
+ LINE 150  */ 
+  setRegions(store, regions) {
+    const map = {}
+    let displayIndex = 1
+    regions
+      .slice()
+      .sort((a, b) => (a.start > b.start ? 1 : -1))
+      .map((item, index) => {
+        const out = {
+          ...item,
+          index,
+          displayIndex,
+        }
+        if (!item.isNote) {
+          displayIndex++
+        }
+        return out
+      })
+      .forEach((item) => {
+        map[`${item.index}-${item.id}`] = item
+      })
+
+    store.commit('SET_REGION_MAP', map)
+
+    store.commit('SET_REGIONS', regions)
+
+
+
+or perhaps this:
+
+return results.hits.hits.map((item) => item._source)
+
+
+
+or my thought was to return an object from the elastic search query that runs against the original object (not array) and push any values not in the object.
+An array might work here too. but just push the element, instead of pushing the whole array. 

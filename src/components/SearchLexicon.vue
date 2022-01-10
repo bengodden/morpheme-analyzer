@@ -1,15 +1,31 @@
 <template>
   <div>
-    <div>
-      <label>Input Morpheme</label>
-      <input type="text" v-model="query"/>
+    <div class="box">
+      <label>Search</label>
+      <input type="text" v-model="query" placeholder="kīkwāy ē-natonaman?" />
+      <div v-for="type in searchTypes" :key="type">
+        <input
+          class="search-type"
+          type="radio"
+          :id="type"
+          :value="type"
+          v-model="searchType"
+        />
+        <label :for="type">{{ type }}</label>
+      </div>
+
+      <div class="submit">
+        <button @click="queryMorpheme">Search</button>
+      </div>
     </div>
-    <div class="submit">
-      <button @click="queryMorpheme">Search</button>
-    </div>
+    <span>IndexName: {{ indexName }}</span
+    ><br />
+    <span>Items Selected: {{ checkedBoxes }}</span>
+
     <div class="noResults" v-if="noResults">
       <p>There are no entries for that query.</p>
     </div>
+
     <div v-for="result in results" :key="result._id">
       <input
         type="checkbox"
@@ -20,10 +36,7 @@
       <label :for="result._id"
         >{{ result._source.roman }} - {{ result._source.definition }}</label
       >
-      
     </div>
-    {{ checkedBoxes }}
-
   </div>
 </template>
 
@@ -37,21 +50,26 @@ export default {
   props: [],
   data() {
     return {
-      query: "mîna",
+      query: "",
       results: [],
       noResults: false,
       checkedBoxes: [],
-      indexName: 'words',
-      queryKey: 'roman'
+      indexName: "words",
+      queryKey: "roman",
+      searchTypes: ["SRO", "English", "Morphemes"],
+      searchType: "SRO",
     };
   },
   methods: {
     queryMorpheme() {
       //reset results array
       this.results = [];
-
       stretchy
-        .searchTerm(this.indexName, this.queryKey, this.query)
+        .searchTerm(
+          this.indexName,
+          this.searchType == "SRO" ? "roman" : "definition",
+          this.query
+        )
         .then((response) => {
           response.forEach((element) => {
             this.results.push(element);
@@ -69,10 +87,6 @@ export default {
 </script>
 
 <style scoped>
-input {
-  border: 2px solid black;
-}
-
 button {
   background: #0f3aaf;
   color: white;
@@ -87,23 +101,51 @@ button {
 button[disabled] {
   opacity: 0.2;
   cursor: not-allowed;
+  display: flex;
+  float: left;
 }
 
 input {
   padding: 10px 15px;
   box-sizing: border-box;
-  border: none;
+  border: 1px solid #555;
   border-bottom: 1px solid #ddd;
   color: #555;
+  display: flex;
 }
 
-label {
+/* label {
   color: black;
   display: inline-block;
-  margin: 25px 0 15px;
+  margin: 25px 5px 15px;
   font-size: 0.6em;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: bold;
+} */
+label {
+  float: left;
+  clear: none;
+  display: flex;
+  padding: 15px 1em 0px 8px;
+}
+input.search-type {
+  display: flex;
+  vertical-align: middle;
+  float: left;
+  /* clear: none; */
+  margin: 2px 0 0 2px;
+}
+
+input[type="radio"],
+input.radio {
+  float: left;
+  clear: none;
+  margin: 15px 0 0 2px;
+  vertical-align: middle;
+}
+
+.box {
+  display: flex;
 }
 </style>

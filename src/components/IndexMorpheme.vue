@@ -12,7 +12,7 @@ import stretchy from "../services/stretchy";
 
 export default {
   name: "IndexMorpheme",
-  props: ['currentindex'],
+  props: ["currentindex"],
   data() {
     return {
       inputMorpheme: null,
@@ -20,23 +20,30 @@ export default {
     };
   },
   methods: {
-    addMorpheme() {
+    async addMorpheme() {
       if (this.inputMorpheme) {
-        stretchy
-          .indexMorpheme(
+        let result;
+        try {
+          result = await stretchy.indexMorpheme(
             this.currentindex,
             this.inputMorpheme,
             this.inputDefinition
-          )
-          .then(() => {
-              console.log(`morpheme ${this.inputMorpheme} added to index: ${this.currentindex}`);
-             this.$emit('morpheme-added')
-             this.inputMorpheme = null;
-            this.inputDefinition = null;
-          });
-        
-        // this.$parent.listMorphemes()
-        
+          );
+        } catch (error) {
+          console.log(error);
+        }
+
+        console.log(
+          `Morpheme ${this.inputMorpheme} was added to index: ${this.currentindex}`
+        );
+
+        this.$emit("morpheme-added", {
+          id: result._id,
+          morpheme: this.inputMorpheme,
+          definition: this.inputDefinition,
+        });
+        this.inputMorpheme = null;
+        this.inputDefinition = null;
       }
     },
   },

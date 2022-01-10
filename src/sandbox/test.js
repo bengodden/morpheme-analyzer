@@ -56,3 +56,22 @@ for (const [ id, value] of Object.entries(response)) {
   this.morphemeList.push(tempObj)
   console.log(this.morphemeList)
 }
+
+listMorphemes() {
+      console.log(`listmorphemes() called on ${this.currentindex}`)
+      stretchy
+        .wholeIndex(this.currentindex)
+        .then((response) => {
+          console.log(`stretchy returned ${response.length} results. morphemeList is currently ${this.morphemeList.length} long`)
+          let difference = response.filter(({'id':id1})=> !this.morphemeList.some(({ 'id': id2}) => id2 === id1))
+          difference.forEach(x => {
+            console.log(`difference: ${x.morpheme}`)
+            this.morphemeList.push(x)
+          })
+          console.log(`difference is ${difference.length} long`)
+          console.log(`morphemeList is now: ${this.morphemeList.length} long`)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },

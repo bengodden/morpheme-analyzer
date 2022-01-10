@@ -11,11 +11,10 @@
 import stretchy from "../services/stretchy";
 
 export default {
-  name: "CreateMorpheme",
+  name: "IndexMorpheme",
   props: [],
   data() {
     return {
-      morphemeList: ["h", "ht", "iso"],
       inputMorpheme: null,
       inputDefinition: null,
       currentIndex: "testdelete",
@@ -34,9 +33,9 @@ export default {
             this.inputMorpheme = null;
             this.inputDefinition = null;
           });
-        console.log(
-          `morpheme ${this.inputMorpheme} added to index: ${this.currentIndex}`
-        );
+        console.log(`morpheme ${this.inputMorpheme} added to index: ${this.currentIndex}`);
+        // this.$parent.listMorphemes()
+        this.$emit('morpheme-added')
       }
     },
   },

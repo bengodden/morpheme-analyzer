@@ -8,20 +8,22 @@ const client = new elasticsearch.Client({ node: "http://localhost:9200/" });
 //Create and index with name: indexName
 
 let index = "testdelete";
-let term = "mīna";
+let morpheme = "google";
 let definition = "This is a definition";
 
-async function addToIndex(term, index, definition) {
+
+async function indexMorpheme(index, morpheme, definition) {
   return await client.index({
     index: index,
+    type: 'morpheme',
     body: {
-      roman: term,
+      morpheme: morpheme,
       definition: definition,
     },
   });
 }
 
-async function searchTerm(query) {
+async function searchTerm(index, query) {
   const response = await client.search({
     index: index,
     body: {
@@ -38,5 +40,5 @@ async function searchTerm(query) {
 
 // export default { search }
 
-// addToIndex()
-searchTerm(term);
+// indexMorpheme(index, morpheme, definition)
+searchTerm(index, morpheme);

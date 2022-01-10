@@ -3,9 +3,9 @@
     <div data-app>
       <h3>Morphemes:</h3>
       <!-- <v-autocomplete :morphemeList="morphemeList"></v-autocomplete> -->
-      
+
       <v-autocomplete
-        :items="morphemeList"
+        :items="currentMorphemes"
         item-text="_source.morpheme"
         v-model="selectedMorphemes"
         multiple
@@ -14,19 +14,13 @@
         hide-selected
       >
       </v-autocomplete>
-    <h3>selectedMorphemes: {{selectedMorphemes}}</h3>
-      <button @click="listMorphemes">List Morphemes</button>
-      <div v-for="morpheme in morphemeList" :key="morpheme._id">
-        <input
-          type="checkbox"
-          :id="morpheme._id"
-          :value="morpheme._id"
-          v-model="checkedBoxes"
-        />
-        <label :for="morpheme._id">
-          {{ morpheme._source.morpheme }} -
-          {{ morpheme._source.definition }}
-        </label>
+      <h3>selectedMorphemes: {{ selectedMorphemes }}</h3>
+      <div v-for="each in morphemeList" :key="each._id">
+        <div>{{ each._source.morpheme }}</div>
+      </div>
+
+      <div class="indexmorpheme">
+        <IndexMorpheme @morpheme-added="listMorphemes" />
       </div>
     </div>
   </div>
@@ -34,21 +28,32 @@
 
 <script>
 import stretchy from "../services/stretchy";
-// stretchy.wholeIndex('testdelete')
-// const Lookup = require("../services/Lookup").default
+import IndexMorpheme from "../components/IndexMorpheme.vue";
+
+
+  function compare( a, b ) {
+  if ( a._source.morpheme < b._source.morpheme ){
+    return -1;
+  }
+  if ( a._source.morpheme > b._source.morpheme ){
+    return 1;
+  }
+  return 0;
+}
 
 export default {
   name: "CreateMorpheme",
+  components: { IndexMorpheme },
   props: [],
-  created(){
-      stretchy.wholeIndex(this.currentIndex)
-      .then((response) => {
-        response.forEach((element) => {
-        console.log(element)
-        this.morphemeList.push(element);
-        });
-      });
-    },
+  created() {
+    stretchy.wholeIndex(this.currentIndex).then((response) => {
+      this.morphemeList = response;
+      // response.forEach((element) => {
+      //   // console.log(element);
+      //   this.morphemeList.push(element);
+      // });
+    });
+  },
   data() {
     return {
       morphemeList: [],
@@ -59,18 +64,27 @@ export default {
   },
   methods: {
     listMorphemes() {
-      this.morphemeList = [];
-      stretchy.wholeIndex(this.currentIndex)
-      .then((response) => {
-        response.forEach((element) => {
-        console.log(element)
-        this.morphemeList.push(element);
+      console.log("listMorphemes called");
+      this.morphemeList.splice(0, this.morphemeList.length);
+      console.log(`morphemeList.length is now: ${this.morphemeList.length}`);
+      stretchy
+        .wholeIndex(this.currentIndex)
+        .then((response) => {
+          console.log(`morphemeList is:`, response);
+          this.morphemeList = response;
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      });
     },
-  }
+  },
+  computed: {
+    currentMorphemes() {
+    
+      return [...this.morphemeList].sort(compare);
+    },
+  },
 };
-
 </script>
 
 <style scoped>
@@ -101,14 +115,4 @@ input {
   border-bottom: 1px solid #ddd;
   color: #555;
 }
-
-/* label {
-  color: black;
-  display: inline-block;
-  margin: 25px 0 15px;
-  font-size: 0.6em;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: bold;
-} */
 </style>

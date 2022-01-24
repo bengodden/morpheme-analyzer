@@ -1,5 +1,5 @@
 Delete an index
-curl -X DELETE "localhost:9200/testdelete?pretty"
+curl -X DELETE "localhost:9200/morphemes?pretty"
 
 
 Delete document
@@ -9,6 +9,24 @@ curl -XDELETE "localhost:9200/index/type/documentID"
 Get all documents:
 curl -XGET http://localhost:9200/foo/_search?pretty=true&q=*:*
 
-curl -XGET http://localhost:9200/testdelete/_search?size=50&q=*:*
+curl -XGET 'http://localhost:9200/testdelete/_search?size=50&q=*:*'
 
 
+make and index:
+curl -X PUT "localhost:9200/morphemes?pretty"
+
+
+//post payi morpheme to 'morphemes' index
+curl -X POST "localhost:9200/morphemes/_doc?pretty" -H 'Content-Type: application/json' -d'
+{
+  "morpheme": "payi",
+  "definition": "automatic; without SAP volition"
+}'
+
+//post 'h' morpheme to 'morphemes' index
+
+curl -X POST "localhost:9200/morphemes/_doc?pretty" -H 'Content-Type: application/json' -d'
+{
+  "morpheme": "h",
+  "definition": "causative"
+}'

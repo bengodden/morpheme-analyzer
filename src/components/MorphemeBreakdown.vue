@@ -32,7 +32,6 @@
 <script>
 import stretchy from "../services/stretchy";
 import IndexMorpheme from "../components/IndexMorpheme.vue";
-
 export default {
   name: "CreateMorpheme",
   components: { IndexMorpheme },
@@ -75,7 +74,6 @@ button[disabled] {
   opacity: 0.2;
   cursor: not-allowed;
 }
-
 input {
   padding: 10px 15px;
   box-sizing: border-box;
@@ -83,7 +81,6 @@ input {
   border-bottom: 1px solid #ddd;
   color: #555;
 }
-
 .autocomplete {
   padding: 0;
   margin: 0;

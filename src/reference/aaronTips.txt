@@ -16,9 +16,6 @@ kiyanaw-backend/src/store/region.js
           index,
           displayIndex,
         }
-        if (!item.isNote) {
-          displayIndex++
-        }
         return out
       })
       .forEach((item) => {

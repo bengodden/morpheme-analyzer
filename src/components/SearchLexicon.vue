@@ -42,9 +42,7 @@
 
 <script>
 import stretchy from "../services/stretchy";
-
 // const Lookup = require("../services/Lookup").default
-
 export default {
   name: "SearchLexicon",
   props: [],
@@ -104,7 +102,6 @@ button[disabled] {
   display: flex;
   float: left;
 }
-
 input {
   padding: 10px 15px;
   box-sizing: border-box;
@@ -113,7 +110,6 @@ input {
   color: #555;
   display: flex;
 }
-
 /* label {
   color: black;
   display: inline-block;
@@ -136,7 +132,6 @@ input.search-type {
   /* clear: none; */
   margin: 2px 0 0 2px;
 }
-
 input[type="radio"],
 input.radio {
   float: left;
@@ -144,7 +139,6 @@ input.radio {
   margin: 15px 0 0 2px;
   vertical-align: middle;
 }
-
 .box {
   display: flex;
 }

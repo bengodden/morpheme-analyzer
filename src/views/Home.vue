@@ -14,7 +14,6 @@
 <script>
 import SearchLexicon from "../components/SearchLexicon";
 import MorphemeBreakdown from "../components/MorphemeBreakdown";
-
 export default {
   name: "Home",
   components: { SearchLexicon, MorphemeBreakdown },

@@ -1,9 +1,13 @@
 <template>
-  <div>
-    <label>Add Morpheme to Index: </label>
-    <input v-model="inputMorpheme" placeholder="morpheme" />
-    <input v-model="inputDefinition" placeholder="definition" />
-    <button @click="addMorpheme">Index Morpheme</button>
+  <div class="container">
+    <label class="flexItem">Add Morpheme to Index: </label>
+    <input class="flexItem" v-model="inputMorpheme" placeholder="morpheme" />
+    <input
+      class="flexItem"
+      v-model="inputDefinition"
+      placeholder="definition"
+    />
+    <button class="flexItem" @click="addMorpheme">Index Morpheme</button>
   </div>
 </template>
 
@@ -12,7 +16,7 @@ import stretchy from "../services/stretchy";
 
 export default {
   name: "IndexMorpheme",
-  props: ["currentindex"],
+  props: [],
   data() {
     return {
       inputMorpheme: null,
@@ -25,7 +29,7 @@ export default {
         let result;
         try {
           result = await stretchy.indexMorpheme(
-            this.currentindex,
+            this.morphemeIndex,
             this.inputMorpheme,
             this.inputDefinition
           );
@@ -34,10 +38,10 @@ export default {
         }
 
         console.log(
-          `Morpheme ${this.inputMorpheme} was added to index: ${this.currentindex}`
+          `Morpheme ${this.inputMorpheme} was added to index: ${this.morphemeIndex}`
         );
 
-        this.$emit("morpheme-added", {
+        this.$store.commit("ADD_MORPHEME_TO_LIST", {
           id: result._id,
           morpheme: this.inputMorpheme,
           definition: this.inputDefinition,
@@ -45,6 +49,11 @@ export default {
         this.inputMorpheme = null;
         this.inputDefinition = null;
       }
+    },
+  },
+  computed: {
+    morphemeIndex() {
+      return this.$store.state.morphemeIndex;
     },
   },
 };
@@ -81,11 +90,24 @@ input {
 
 label {
   color: black;
-  display: inline-block;
   margin: 25px 0 15px;
   font-size: 0.6em;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: bold;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  row-gap: 10px;
+}
+flexItem {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  align-content: center;
 }
 </style>

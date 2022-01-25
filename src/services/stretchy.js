@@ -25,25 +25,46 @@ async function searchTerm(index, category, term) {
       },
     },
   });
-  console.log(response.hits.hits);
-  return response.hits.hits;
+  // console.log(response.hits.hits);
+  const returnArray = [];
+  response.hits.hits.forEach((element) => {
+    if (category === "morpheme") {
+      returnArray.push({
+        id: element._id,
+        lemma: element["_source"][category],
+        definition: element["_source"]["definition"],
+      });
+    } else {
+      returnArray.push({
+        id: element._id,
+        lemma: element["_source"]["roman"],
+        definition: element["_source"]["definition"],
+      });
+    }
+  });
+  console.log(
+    `Stretchy: returning response of ${returnArray.length} element(s):`,
+    returnArray
+  );
+  return returnArray;
+  // return response.hits.hits;
 }
 
 async function wholeIndex(index) {
-  await client.indices.refresh({index})
+  await client.indices.refresh({ index });
   const response = await client.search({
     index: index,
     size: 200,
-  })
-  const returnArray =[]
-  response.hits.hits.forEach(element => {
-    returnArray.push ({
-      "id": element._id,
-      "morpheme": element['_source']['morpheme'],
-      "definition": element['_source']['definition']
-    })
-  })
-  console.log(`Stretchy: returning response of ${returnArray.length} elements`)
+  });
+  const returnArray = [];
+  response.hits.hits.forEach((element) => {
+    returnArray.push({
+      id: element._id,
+      morpheme: element["_source"]["morpheme"],
+      definition: element["_source"]["definition"],
+    });
+  });
+  console.log(`Stretchy: returning response of ${returnArray.length} elements`);
   return returnArray;
 }
 

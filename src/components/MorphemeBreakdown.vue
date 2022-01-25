@@ -1,11 +1,11 @@
 <template>
   <div>
     <div data-app>
-      <h3>Morphemes:</h3>
       <div class="autocomplete">
         <v-autocomplete
           :items="morphemeList"
-          item-text=".morpheme"
+          :item-text="(item) => item.morpheme + ' - ' + item.definition"
+          :item-value="(item) => item.id"
           v-model="selectedMorphemes"
           multiple
           chips
@@ -14,52 +14,47 @@
         >
         </v-autocomplete>
       </div>
-      <!-- <h3>selectedMorphemes: {{ selectedMorphemes }}</h3>
-      <div v-for="each in morphemeList" :key="each._id">
-        <div>{{ each.morpheme }}</div>
-      </div> -->
-
-      <div class="indexmorpheme">
-        <IndexMorpheme
-          @morpheme-added="onAddMorpheme"
-          v-bind:currentindex="currentindex"
-        />
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import stretchy from "../services/stretchy";
-import IndexMorpheme from "../components/IndexMorpheme.vue";
+// import { store } from "../store/store";
+
 export default {
   name: "CreateMorpheme",
-  components: { IndexMorpheme },
-  props: [],
+  components: {},
+  props: ["result"],
   created() {
-    stretchy.wholeIndex(this.currentindex).then((response) => {
-      this.morphemeList = response;
+    stretchy.wholeIndex(this.morphemeIndex).then((response) => {
+      this.setMorphemeList(response);
       console.log(`Initial length of morphemeList is: ${response.length}`);
     });
   },
   data() {
     return {
-      morphemeList: [],
-      checkedBoxes: [],
-      currentindex: "morphemes",
       selectedMorphemes: [],
     };
   },
   methods: {
-    onAddMorpheme(newItem) {
-      this.morphemeList.push(newItem);
+    setMorphemeList(list) {
+      this.$store.commit("SET_MORPHEME_LIST", list);
+    },
+  },
+  computed: {
+    morphemeList() {
+      return this.$store.state.morphemeList;
+    },
+    morphemeIndex() {
+      return this.$store.state.morphemeIndex;
     },
   },
 };
 </script>
 
 <style scoped>
-button {
+/* button {
   background: #0f3aaf;
   color: white;
   border: none;
@@ -80,15 +75,8 @@ input {
   border: none;
   border-bottom: 1px solid #ddd;
   color: #555;
-}
+} */
 .autocomplete {
-  padding: 0;
-  margin: 0;
-  border: 1px solid #eeeeee;
-  height: 120px;
-  min-height: 1em;
-  max-height: 6em;
-  overflow: hidden;
-  position: relative;
+  /* overflow: hidden; */
 }
 </style>

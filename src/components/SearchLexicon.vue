@@ -1,50 +1,65 @@
 <template>
   <div>
-    <div class="box">
-      <label>Search</label>
-      <input type="text" v-model="query" placeholder="kīkwāy ē-natonaman?" />
-      <div v-for="type in searchTypes" :key="type">
+    <div class="container">
+      <div class="search">
+        <div id="searchTypeContainer">
+          <div v-for="type in searchTypes" :key="type.orth" id="typeOfSearch">
+            <input
+              class="search-type"
+              type="radio"
+              :id="type"
+              :value="type"
+              v-model="searchType"
+            />
+            <label :for="type">{{ type.orth }}</label>
+          </div>
+        </div>
+        <input type="text" v-model="query" placeholder="kīkwāy ē-natonaman?" />
+
+        <div class="submit">
+          <button @click="queryMorpheme">Search</button>
+        </div>
+      </div>
+      <!-- <span>IndexName: {{ currentIndex }}</span
+      ><br />
+      <span>Items Selected: {{ checkedBoxes }}</span> -->
+
+      <div class="indexMorpheme">
+        <IndexMorpheme />
+      </div>
+
+      <div class="noResults" v-if="noResults">
+        <p>There are no entries for that query.</p>
+      </div>
+
+      <div v-for="result in results" :key="result._id" class="listContainer">
         <input
-          class="search-type"
-          type="radio"
-          :id="type"
-          :value="type"
-          v-model="searchType"
+          type="checkbox"
+          :id="result.id"
+          :value="result.id"
+          v-model="checkedBoxes"
+          class="listItem"
         />
-        <label :for="type">{{ type }}</label>
-      </div>
-
-      <div class="submit">
-        <button @click="queryMorpheme">Search</button>
+        <span class="listItem2">{{ result.lemma }}</span>
+        <span class="listItem3">{{ result.definition }}</span>
+        <span class="listItem4"><MorphemeBreakdown result="result" /></span>
       </div>
     </div>
-    <span>IndexName: {{ indexName }}</span
-    ><br />
-    <span>Items Selected: {{ checkedBoxes }}</span>
 
-    <div class="noResults" v-if="noResults">
-      <p>There are no entries for that query.</p>
-    </div>
-
-    <div v-for="result in results" :key="result._id">
-      <input
-        type="checkbox"
-        :id="result._id"
-        :value="result._id"
-        v-model="checkedBoxes"
-      />
-      <label :for="result._id"
-        >{{ result._source.roman }} - {{ result._source.definition }}</label
-      >
+    <div class="createmorpheme">
+      <MorphemeBreakdown />
     </div>
   </div>
 </template>
 
 <script>
 import stretchy from "../services/stretchy";
+import MorphemeBreakdown from "../components/MorphemeBreakdown.vue";
+import IndexMorpheme from "../components/IndexMorpheme.vue";
 // const Lookup = require("../services/Lookup").default
 export default {
   name: "SearchLexicon",
+  components: { MorphemeBreakdown, IndexMorpheme },
   props: [],
   data() {
     return {
@@ -52,23 +67,27 @@ export default {
       results: [],
       noResults: false,
       checkedBoxes: [],
-      indexName: "words",
-      queryKey: "roman",
-      searchTypes: ["SRO", "English", "Morphemes"],
-      searchType: "SRO",
+      searchTypes: [
+        { orth: "SRO", queryKey: "roman" },
+        { orth: "English", queryKey: "definition" },
+        { orth: "Morphemes", queryKey: "morpheme" },
+      ],
+      searchType: { orth: "SRO", queryKey: "roman" },
     };
   },
   methods: {
     queryMorpheme() {
-      //reset results array
       this.results = [];
+      this.clearCheckedBoxes();
+      console.log(
+        "submitting:" + this.currentIndex,
+        this.searchType.queryKey,
+        this.query
+      );
       stretchy
-        .searchTerm(
-          this.indexName,
-          this.searchType == "SRO" ? "roman" : "definition",
-          this.query
-        )
+        .searchTerm(this.currentIndex, this.searchType.queryKey, this.query)
         .then((response) => {
+          console.log("passed back elements: ", response);
           response.forEach((element) => {
             this.results.push(element);
           });
@@ -79,6 +98,23 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+    },
+    clearCheckedBoxes() {
+      if (typeof this.checkedBoxes !== "undefined") {
+        this.checkedBoxes.splice(0, this.checkedBoxes.length);
+      }
+    },
+  },
+  computed: {
+    currentIndex() {
+      if (
+        this.searchType.orth === "SRO" ||
+        this.searchType.orth === "English"
+      ) {
+        return this.$store.state.wordIndex;
+      } else {
+        return this.$store.state.morphemeIndex;
+      }
     },
   },
 };
@@ -99,16 +135,12 @@ button {
 button[disabled] {
   opacity: 0.2;
   cursor: not-allowed;
-  display: flex;
-  float: left;
 }
 input {
   padding: 10px 15px;
-  box-sizing: border-box;
   border: 1px solid #555;
   border-bottom: 1px solid #ddd;
   color: #555;
-  display: flex;
 }
 /* label {
   color: black;
@@ -120,26 +152,92 @@ input {
   font-weight: bold;
 } */
 label {
-  float: left;
-  clear: none;
-  display: flex;
   padding: 15px 1em 0px 8px;
 }
 input.search-type {
-  display: flex;
-  vertical-align: middle;
-  float: left;
-  /* clear: none; */
   margin: 2px 0 0 2px;
+  flex-grow: 1;
 }
-input[type="radio"],
 input.radio {
-  float: left;
-  clear: none;
   margin: 15px 0 0 2px;
-  vertical-align: middle;
 }
-.box {
+.container {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  row-gap: 10px;
+}
+
+.search {
+  display: flex;
+  flex: 1 1 10%;
+  order: 0;
+}
+#typeOfSearch {
+  width: 100%;
+}
+#searchTypeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  row-gap: 10px;
+  width: 1500px;
+  border: 1px solid black;
+  order: 2;
+}
+
+.listItem {
+  padding: 8px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  order: 1;
+  flex-grow: 0;
+  flex-basis: 3%;
+  flex-shrink: 0;
+}
+.listItem2 {
+  padding: 4px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  order: 2;
+  flex-grow: 0;
+  flex-basis: 300px;
+  flex-shrink: 0;
+  background: rgba(106, 90, 205, 0.3);
+}
+.listItem3 {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  order: 3;
+  flex-grow: 1;
+  background: rgba(75, 175, 80, 0.3);
+}
+.listItem4 {
+  /* padding: 4px 0px;
+  border-radius: 4px; */
+  /* font-size: 16px; */
+  letter-spacing: 1px;
+  order: 3;
+  flex-grow: 1;
+  background: rgba(75, 175, 80, 0.3);
+}
+.indexMorpheme {
+  order: 1;
+  flex: 1 1 auto;
 }
 </style>

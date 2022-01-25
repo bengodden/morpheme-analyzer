@@ -4,25 +4,22 @@
       <div class="searchdiv">
         <SearchLexicon />
       </div>
-      <div class="createmorpheme">
-        <MorphemeBreakdown />
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import SearchLexicon from "../components/SearchLexicon";
-import MorphemeBreakdown from "../components/MorphemeBreakdown";
+
 export default {
   name: "Home",
-  components: { SearchLexicon, MorphemeBreakdown },
+  components: { SearchLexicon },
   data() {
     return {
       results: "",
+      currentindex: "morphemes",
     };
   },
-  methods: {},
 };
 </script>
 
